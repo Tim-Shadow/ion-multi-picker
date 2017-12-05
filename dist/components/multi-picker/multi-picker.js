@@ -20,6 +20,7 @@ var MultiPicker = (function () {
         this._isDependent = false;
         this._sequence = [];
         this._originSelectedIndexes = [];
+        this.onlyLastValueText = false;
         this.cancelText = 'Cancel';
         this.doneText = 'Done';
         this.resetText = 'Reset';
@@ -57,9 +58,23 @@ var MultiPicker = (function () {
         }
         var pickerOptions = {};
         var picker = this._pickerCtrl.create(pickerOptions);
-        var cancel = { text: this.cancelText, role: 'multi-picker-cancel', handler: function () { _this.ionCancel.emit(null); } };
-        var reset = { text: this.resetText, role: 'multi-picker-reset', handler: function (data) { _this.reset(); return false; } };
-        var done = { text: this.doneText, handler: function (data) { _this.onChange(data); _this.ionChange.emit(data); } };
+        var cancel = {
+            text: this.cancelText, role: 'multi-picker-cancel', handler: function () {
+                _this.ionCancel.emit(null);
+            }
+        };
+        var reset = {
+            text: this.resetText, role: 'multi-picker-reset', handler: function (data) {
+                _this.reset();
+                return false;
+            }
+        };
+        var done = {
+            text: this.doneText, handler: function (data) {
+                _this.onChange(data);
+                _this.ionChange.emit(data);
+            }
+        };
         pickerOptions.buttons = this.showReset ? [cancel, reset, done] : [cancel, done];
         this._isDependent = this.multiPickerColumns.some(function (col) { return col.options.some(function (opt) { return opt.parentVal; }); });
         this.generate(picker);
@@ -113,7 +128,9 @@ var MultiPicker = (function () {
             }
             var column = {
                 name: col.name || index.toString(),
-                options: options.map(function (option) { return { text: option.text, value: option.value, disabled: option.disabled || false }; }),
+                options: options.map(function (option) {
+                    return { text: option.text, value: option.value, disabled: option.disabled || false };
+                }),
                 columnWidth: col.columnWidth
             };
             var selectedIndex = column.options.findIndex(function (option) { return option.value == values[index]; });
@@ -230,10 +247,17 @@ var MultiPicker = (function () {
         var values = this._value.toString().split(this.separator);
         this.multiPickerColumns.forEach(function (col, index) {
             var option = col.options.find(function (option) { return option.value.toString() === values[index]; });
-            if (option) {
-                _this._text += "" + option.text;
-                if (index < _this.multiPickerColumns.length - 1) {
-                    _this._text += "" + _this.separator;
+            if (_this.onlyLastValueText && values.length > 1) {
+                if (option && index == _this.multiPickerColumns.length - 1) {
+                    _this._text += "" + option.text;
+                }
+            }
+            else {
+                if (option) {
+                    _this._text += "" + option.text;
+                    if (index < _this.multiPickerColumns.length - 1) {
+                        _this._text += "" + _this.separator;
+                    }
                 }
             }
         });
@@ -269,13 +293,16 @@ var MultiPicker = (function () {
             _this.onTouched();
         };
     };
-    MultiPicker.prototype.registerOnTouched = function (fn) { this.onTouched = fn; };
+    MultiPicker.prototype.registerOnTouched = function (fn) {
+        this.onTouched = fn;
+    };
     MultiPicker.prototype.onChange = function (val) {
         this.setValue(this.convertObjectToString(val));
         this.updateText();
         this.onTouched();
     };
-    MultiPicker.prototype.onTouched = function () { };
+    MultiPicker.prototype.onTouched = function () {
+    };
     MultiPicker.prototype.ngOnDestroy = function () {
         this._form.deregister(this);
     };
@@ -324,6 +351,7 @@ MultiPicker.ctorParameters = function () { return [
     { type: ionic_angular_1.PickerController, decorators: [{ type: core_1.Optional },] },
 ]; };
 MultiPicker.propDecorators = {
+    'onlyLastValueText': [{ type: core_1.Input },],
     'cancelText': [{ type: core_1.Input },],
     'doneText': [{ type: core_1.Input },],
     'resetText': [{ type: core_1.Input },],

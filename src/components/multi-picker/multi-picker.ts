@@ -1,7 +1,18 @@
-import { AfterContentInit, Component, EventEmitter, forwardRef, HostListener, Input, OnDestroy, Optional, Output, ViewEncapsulation } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { PickerController, Form, Item, PickerColumn, PickerCmp, PickerColumnCmp } from 'ionic-angular';
-import { MultiPickerColumn, MultiPickerOption } from './multi-picker-options';
+import {
+  AfterContentInit,
+  Component,
+  EventEmitter,
+  forwardRef,
+  HostListener,
+  Input,
+  OnDestroy,
+  Optional,
+  Output,
+  ViewEncapsulation
+} from '@angular/core';
+import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {PickerController, Form, Item, PickerColumn, PickerCmp, PickerColumnCmp} from 'ionic-angular';
+import {MultiPickerColumn, MultiPickerOption} from './multi-picker-options';
 
 export const MULTI_PICKER_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -40,6 +51,9 @@ export class MultiPicker implements AfterContentInit, ControlValueAccessor, OnDe
    * @private
    */
   id: string;
+  //是否只显示最后一个value
+  @Input()
+  onlyLastValueText: boolean = false;
 
   /**
    * @input {string} The text to display on the picker's cancel button. Default: `Cancel`.
@@ -126,9 +140,23 @@ export class MultiPicker implements AfterContentInit, ControlValueAccessor, OnDe
     let pickerOptions: any = {};
 
     let picker = this._pickerCtrl.create(pickerOptions);
-    const cancel = { text: this.cancelText, role: 'multi-picker-cancel', handler: () => { this.ionCancel.emit(null); } }
-    const reset = { text: this.resetText, role: 'multi-picker-reset', handler: (data: any) => { this.reset(); return false; } }
-    const done = { text: this.doneText, handler: (data: any) => { this.onChange(data); this.ionChange.emit(data); } }
+    const cancel = {
+      text: this.cancelText, role: 'multi-picker-cancel', handler: () => {
+        this.ionCancel.emit(null);
+      }
+    }
+    const reset = {
+      text: this.resetText, role: 'multi-picker-reset', handler: (data: any) => {
+        this.reset();
+        return false;
+      }
+    }
+    const done = {
+      text: this.doneText, handler: (data: any) => {
+        this.onChange(data);
+        this.ionChange.emit(data);
+      }
+    }
     pickerOptions.buttons = this.showReset ? [cancel, reset, done] : [cancel, done];
 
     // Determine if the picker is a dependent picker
@@ -208,7 +236,9 @@ export class MultiPicker implements AfterContentInit, ControlValueAccessor, OnDe
       // Generate picker column
       let column: any = {
         name: col.name || index.toString(),
-        options: options.map(option => { return { text: option.text, value: option.value, disabled: option.disabled || false } }),
+        options: options.map(option => {
+          return {text: option.text, value: option.value, disabled: option.disabled || false}
+        }),
         columnWidth: col.columnWidth
       }
       // Set selectedIndex
@@ -252,7 +282,7 @@ export class MultiPicker implements AfterContentInit, ControlValueAccessor, OnDe
         // update column options
         this.multiPickerColumns[i].options.forEach(option => {
           if (option.parentVal == parentOption.value) {
-            curCol.options.push({ text: option.text, value: option.value, disabled: false });
+            curCol.options.push({text: option.text, value: option.value, disabled: false});
           }
         });
         let selectedIndex = curCol.selectedIndex >= curCol.options.length ? curCol.options.length - 1 : curCol.selectedIndex;
@@ -366,12 +396,19 @@ export class MultiPicker implements AfterContentInit, ControlValueAccessor, OnDe
     let values: string[] = this._value.toString().split(this.separator);
     this.multiPickerColumns.forEach((col, index) => {
       let option = col.options.find(option => option.value.toString() === values[index]);
-      if (option) {
-        this._text += `${option.text}`;
-        if (index < this.multiPickerColumns.length - 1) {
-          this._text += `${this.separator}`;
+      if (this.onlyLastValueText && values.length > 1) {
+        if (option && index == this.multiPickerColumns.length - 1) {
+          this._text += `${option.text}`;
+        }
+      } else {
+        if (option) {
+          this._text += `${option.text}`;
+          if (index < this.multiPickerColumns.length - 1) {
+            this._text += `${this.separator}`;
+          }
         }
       }
+
     });
     this._text = this._text.trim();
   }
@@ -424,11 +461,13 @@ export class MultiPicker implements AfterContentInit, ControlValueAccessor, OnDe
   /**
    * @private
    */
-  registerOnTouched(fn: any) { this.onTouched = fn; }
+  registerOnTouched(fn: any) {
+    this.onTouched = fn;
+  }
 
   /**
-  * @private
-  */
+   * @private
+   */
   onChange(val: any) {
     // onChange used when there is not an formControlName
     this.setValue(this.convertObjectToString(val));
@@ -437,20 +476,21 @@ export class MultiPicker implements AfterContentInit, ControlValueAccessor, OnDe
   }
 
   /**
-  * @private
-  */
-  onTouched() { }
+   * @private
+   */
+  onTouched() {
+  }
 
   /**
-  * @private
-  */
+   * @private
+   */
   ngOnDestroy() {
     this._form.deregister(this);
   }
 
   /**
-  * @private Convert the picker ionChange event object data to string
-  */
+   * @private Convert the picker ionChange event object data to string
+   */
   convertObjectToString(newData) {
     let value = ``;
     this.multiPickerColumns.forEach((col, index) => {

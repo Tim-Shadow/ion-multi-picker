@@ -250,7 +250,14 @@ var MultiPicker = (function () {
         var lastValue;
         this.multiPickerColumns.forEach(function (col, index) {
             var value = values[index];
-            var option = col.options.find(function (option) { return option.value.toString() === value && lastValue === (option.parentVal + ""); });
+            var option = col.options.find(function (option) {
+                if (option.parentVal) {
+                    return option.parentVal.toString() === lastValue && option.value.toString() === value;
+                }
+                else {
+                    return option.value.toString() === value;
+                }
+            });
             if (_this.onlyLastValueText) {
                 if (option && conti) {
                     _this._text = "" + option.text;

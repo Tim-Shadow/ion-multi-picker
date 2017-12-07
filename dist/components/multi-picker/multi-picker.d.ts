@@ -23,6 +23,7 @@ export declare class MultiPicker implements AfterContentInit, ControlValueAccess
     cancelText: string;
     doneText: string;
     resetText: string;
+    nullValue: string;
     multiPickerColumns: MultiPickerColumn[];
     separator: string;
     placeholder: string;

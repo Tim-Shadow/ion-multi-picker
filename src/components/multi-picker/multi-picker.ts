@@ -70,6 +70,7 @@ export class MultiPicker implements AfterContentInit, ControlValueAccessor, OnDe
    */
   @Input() resetText: string = 'Reset';
 
+  @Input() nullValue: string = 'null';
   /**
    * @input {MultiPickerColumn} The columns display in the picker's panel.
    */
@@ -394,11 +395,18 @@ export class MultiPicker implements AfterContentInit, ControlValueAccessor, OnDe
   updateText() {
     this._text = '';
     let values: string[] = this._value.toString().split(this.separator);
+
+    let conti = true;
     this.multiPickerColumns.forEach((col, index) => {
-      let option = col.options.find(option => option.value.toString() === values[index]);
+      let value = values[index];
+      let option = col.options.find(option => option.value.toString() === value);
+
       if (this.onlyLastValueText) {
-        if (option) {
+        if (option && conti) {
           this._text = `${option.text}`;
+        }
+        if (value === this.nullValue) {
+          conti = false;
         }
       } else {
         if (option) {
@@ -407,6 +415,17 @@ export class MultiPicker implements AfterContentInit, ControlValueAccessor, OnDe
             this._text += `${this.separator}`;
           }
         }
+      }
+    });
+
+    this.multiPickerColumns.forEach((col, index) => {
+      let option = col.options.find(option => option.value.toString() === values[index]);
+      if (this.onlyLastValueText) {
+        if (option) {
+          this._text = `${option.text}`;
+        }
+      } else {
+
       }
 
     });

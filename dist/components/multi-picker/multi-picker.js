@@ -24,6 +24,7 @@ var MultiPicker = (function () {
         this.cancelText = 'Cancel';
         this.doneText = 'Done';
         this.resetText = 'Reset';
+        this.nullValue = 'null';
         this.multiPickerColumns = [];
         this.separator = ' ';
         this.placeholder = '';
@@ -245,11 +246,16 @@ var MultiPicker = (function () {
         var _this = this;
         this._text = '';
         var values = this._value.toString().split(this.separator);
+        var conti = true;
         this.multiPickerColumns.forEach(function (col, index) {
-            var option = col.options.find(function (option) { return option.value.toString() === values[index]; });
+            var value = values[index];
+            var option = col.options.find(function (option) { return option.value.toString() === value; });
             if (_this.onlyLastValueText) {
-                if (option) {
+                if (option && conti) {
                     _this._text = "" + option.text;
+                }
+                if (value === _this.nullValue) {
+                    conti = false;
                 }
             }
             else {
@@ -259,6 +265,16 @@ var MultiPicker = (function () {
                         _this._text += "" + _this.separator;
                     }
                 }
+            }
+        });
+        this.multiPickerColumns.forEach(function (col, index) {
+            var option = col.options.find(function (option) { return option.value.toString() === values[index]; });
+            if (_this.onlyLastValueText) {
+                if (option) {
+                    _this._text = "" + option.text;
+                }
+            }
+            else {
             }
         });
         this._text = this._text.trim();
@@ -355,6 +371,7 @@ MultiPicker.propDecorators = {
     'cancelText': [{ type: core_1.Input },],
     'doneText': [{ type: core_1.Input },],
     'resetText': [{ type: core_1.Input },],
+    'nullValue': [{ type: core_1.Input },],
     'multiPickerColumns': [{ type: core_1.Input },],
     'separator': [{ type: core_1.Input },],
     'placeholder': [{ type: core_1.Input },],

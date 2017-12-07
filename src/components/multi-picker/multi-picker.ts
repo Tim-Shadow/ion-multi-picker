@@ -400,7 +400,7 @@ export class MultiPicker implements AfterContentInit, ControlValueAccessor, OnDe
     let lastValue;
     this.multiPickerColumns.forEach((col, index) => {
       let value = values[index];
-      let option = col.options.find(option => option.value.toString() === value && lastValue === option.parentVal.toString());
+      let option = col.options.find(option => option.value.toString() === value && lastValue === (option.parentVal + ""));
 
       if (this.onlyLastValueText) {
         if (option && conti) {

@@ -267,16 +267,6 @@ var MultiPicker = (function () {
                 }
             }
         });
-        this.multiPickerColumns.forEach(function (col, index) {
-            var option = col.options.find(function (option) { return option.value.toString() === values[index]; });
-            if (_this.onlyLastValueText) {
-                if (option) {
-                    _this._text = "" + option.text;
-                }
-            }
-            else {
-            }
-        });
         this._text = this._text.trim();
     };
     Object.defineProperty(MultiPicker.prototype, "disabled", {

@@ -417,18 +417,6 @@ export class MultiPicker implements AfterContentInit, ControlValueAccessor, OnDe
         }
       }
     });
-
-    this.multiPickerColumns.forEach((col, index) => {
-      let option = col.options.find(option => option.value.toString() === values[index]);
-      if (this.onlyLastValueText) {
-        if (option) {
-          this._text = `${option.text}`;
-        }
-      } else {
-
-      }
-
-    });
     this._text = this._text.trim();
   }
 

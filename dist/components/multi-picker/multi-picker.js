@@ -247,9 +247,9 @@ var MultiPicker = (function () {
         var values = this._value.toString().split(this.separator);
         this.multiPickerColumns.forEach(function (col, index) {
             var option = col.options.find(function (option) { return option.value.toString() === values[index]; });
-            if (_this.onlyLastValueText && values.length > 1) {
-                if (option && index == _this.multiPickerColumns.length - 1) {
-                    _this._text += "" + option.text;
+            if (_this.onlyLastValueText) {
+                if (option) {
+                    _this._text = "" + option.text;
                 }
             }
             else {

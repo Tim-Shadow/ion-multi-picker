@@ -10,9 +10,9 @@ import {
   Output,
   ViewEncapsulation
 } from '@angular/core';
-import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {PickerController, Form, Item, PickerColumn, PickerCmp, PickerColumnCmp} from 'ionic-angular';
-import {MultiPickerColumn, MultiPickerOption} from './multi-picker-options';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { PickerController, Form, Item, PickerColumn, PickerCmp, PickerColumnCmp } from 'ionic-angular';
+import { MultiPickerColumn, MultiPickerOption } from './multi-picker-options';
 
 export const MULTI_PICKER_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -237,7 +237,7 @@ export class MultiPicker implements AfterContentInit, ControlValueAccessor, OnDe
       let column: any = {
         name: col.name || index.toString(),
         options: options.map(option => {
-          return {text: option.text, value: option.value, disabled: option.disabled || false}
+          return { text: option.text, value: option.value, disabled: option.disabled || false }
         }),
         columnWidth: col.columnWidth
       }
@@ -282,7 +282,7 @@ export class MultiPicker implements AfterContentInit, ControlValueAccessor, OnDe
         // update column options
         this.multiPickerColumns[i].options.forEach(option => {
           if (option.parentVal == parentOption.value) {
-            curCol.options.push({text: option.text, value: option.value, disabled: false});
+            curCol.options.push({ text: option.text, value: option.value, disabled: false });
           }
         });
         let selectedIndex = curCol.selectedIndex >= curCol.options.length ? curCol.options.length - 1 : curCol.selectedIndex;
@@ -396,9 +396,9 @@ export class MultiPicker implements AfterContentInit, ControlValueAccessor, OnDe
     let values: string[] = this._value.toString().split(this.separator);
     this.multiPickerColumns.forEach((col, index) => {
       let option = col.options.find(option => option.value.toString() === values[index]);
-      if (this.onlyLastValueText && values.length > 1) {
-        if (option && index == this.multiPickerColumns.length - 1) {
-          this._text += `${option.text}`;
+      if (this.onlyLastValueText) {
+        if (option) {
+          this._text = `${option.text}`;
         }
       } else {
         if (option) {

@@ -247,15 +247,19 @@ var MultiPicker = (function () {
         this._text = '';
         var values = this._value.toString().split(this.separator);
         var conti = true;
+        var lastValue;
         this.multiPickerColumns.forEach(function (col, index) {
             var value = values[index];
-            var option = col.options.find(function (option) { return option.value.toString() === value; });
+            var option = col.options.find(function (option) { return option.value.toString() === value && lastValue === option.parentVal.toString(); });
             if (_this.onlyLastValueText) {
                 if (option && conti) {
                     _this._text = "" + option.text;
                 }
                 if (value === _this.nullValue) {
                     conti = false;
+                }
+                else {
+                    lastValue = value;
                 }
             }
             else {

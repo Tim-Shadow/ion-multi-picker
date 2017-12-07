@@ -397,9 +397,10 @@ export class MultiPicker implements AfterContentInit, ControlValueAccessor, OnDe
     let values: string[] = this._value.toString().split(this.separator);
 
     let conti = true;
+    let lastValue;
     this.multiPickerColumns.forEach((col, index) => {
       let value = values[index];
-      let option = col.options.find(option => option.value.toString() === value);
+      let option = col.options.find(option => option.value.toString() === value && lastValue === option.parentVal.toString());
 
       if (this.onlyLastValueText) {
         if (option && conti) {
@@ -407,6 +408,8 @@ export class MultiPicker implements AfterContentInit, ControlValueAccessor, OnDe
         }
         if (value === this.nullValue) {
           conti = false;
+        } else {
+          lastValue = value;
         }
       } else {
         if (option) {
